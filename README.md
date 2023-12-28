@@ -5,6 +5,15 @@
 
 ### 로그인 페이지
 
+### 회원 가입 페이지
+
+- 이름
+- 이메일
+- 비밀번호
+- 비밀번호 체크
+- 전화번호
+- 생년월일
+
 ### 메인 페이지
 
 1. 개발팀 요청
@@ -175,7 +184,7 @@ Host: localhost:3000
 
 ```
 {
-   "email" : "Julia@gamil.com",
+   "email" : email,
    "password" : password
 }
 ```
@@ -201,6 +210,51 @@ Content-Type: application/json
   "success" : false,
   "response" : "" ,
   "error" : "일치하지 않는 ID와 PW입니다."
+}
+
+```
+
+### Sign up
+
+- method `POST`
+- URL `/signup`
+
+#### Request Header
+
+```
+POST /signup HTTP/1.1
+Content-Type: application/json
+Host: localhost:3000
+```
+
+#### Request Body
+
+```
+{
+   "name" : "string",
+   "email" : email,
+   "password" : password,
+   "passwordcheck" : password,
+   "phone" : "010-0000-0000",
+   "birth" : "0000-00-00",
+}
+```
+
+#### Resonse Header
+
+```
+HTTP/1.1 200 OK
+Authorization: Bearer {JWT Token}
+Content-Type: application/json
+```
+
+#### Response Body
+
+```
+{
+  "success" : true,
+  "response" : "" ,
+  "error" : null
 }
 
 ```
@@ -691,7 +745,7 @@ Content-Type: application/json
 }
 ```
 
-### 질문 / 요청
+### 질문 / 질문하기
 
 - method `POST`
 - URL `/inquiry/ask`
