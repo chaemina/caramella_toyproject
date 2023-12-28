@@ -1,6 +1,7 @@
 # caramella_toyproject
 
-## 기능 명세서 초안
+<details>
+<summary>기능 명세서 초안</summary>
 
 ### 로그인 페이지
 
@@ -145,3 +146,559 @@
 ### 개인정보 관리 페이지
 
 ### 연차 페이지
+
+</details>
+
+<details>
+<summary>API 문서</summary>
+
+### Login
+
+- method `POST`
+- URL `/login`
+
+#### Request Header
+
+```
+POST /login HTTP/1.1
+Content-Type: application/json
+Host: localhost:3000
+```
+
+#### Request Body
+
+```
+{
+   "email" : "Julia@gamil.com",
+   "password" : password
+}
+```
+
+#### Resonse Header
+
+```
+HTTP/1.1 200 OK
+Authorization: Bearer {JWT Token}
+Content-Type: application/json
+```
+
+#### Response Body
+
+```
+{
+  "success" : true,
+  "response" : "" ,
+  "error" : null
+}
+
+{
+  "success" : false,
+  "response" : "" ,
+  "error" : "일치하지 않는 ID와 PW입니다."
+}
+
+```
+
+### 개선사항
+
+- method `POST`
+- URL `/improve`
+
+#### Request Header
+
+```
+POST /improve HTTP/1.1
+Content-Type: application/json
+Host: localhost:3000
+```
+
+#### Request Body
+
+```
+{
+   "message" : "string"
+}
+```
+
+#### Resonse Header
+
+```
+HTTP/1.1 200 OK
+Authorization: Bearer {JWT Token}
+Content-Type: application/json
+```
+
+#### Response Body
+
+```
+{
+  "success" : true,
+  "response" : "" ,
+  "error" : null
+}
+
+```
+
+### 통합지원 / 네이버 웍스
+
+- method `POST`
+- URL `/combine/works`
+
+#### Request Header
+
+```
+POST /combine/works HTTP/1.1
+Content-Type: multipart/form-data
+Host: localhost:3000
+```
+
+#### Request Body
+
+```
+FormData
+
+name = "file"
+filename = "example.png"
+Content-Type : png,jpeg ...etc
+
+------------
+
+name = "requestDTO"
+filename = "blob"
+Content-Type : application/json
+
+{
+   "title" : "string",
+   "message" : "string",
+}
+
+```
+
+#### Resonse Header
+
+```
+HTTP/1.1 200 OK
+Authorization: Bearer {JWT Token}
+Content-Type: application/json
+```
+
+#### Response Body
+
+```
+{
+  "success" : true,
+  "response" : "" ,
+  "error" : null
+}
+
+```
+
+### 통합지원 / 신규 팀원
+
+- method `POST`
+- URL `/combine/newmember`
+
+#### Request Header
+
+```
+POST /combine/newmember HTTP/1.1
+Content-Type:  application/json
+Host: localhost:3000
+```
+
+#### Request Body
+
+```
+{
+    "fullName" : "string",
+    "supervisor" : "string",
+    "job" : "string",
+    "startDate" : "0000-00-00",
+    "employee" : "string",
+    "location" : "string",
+    "office" : boolean,
+    "firstName" : "string",
+    "lastName" : "string",
+    "email" : "email",
+    "phone" : "string",
+    "service" : ["item1","item2",...]
+}
+```
+
+#### Resonse Header
+
+```
+HTTP/1.1 200 OK
+Authorization: Bearer {JWT Token}
+Content-Type: application/json
+```
+
+#### Response Body
+
+```
+{
+  "success" : true,
+  "response" : "" ,
+  "error" : null
+}
+
+```
+
+### 자원관리 / 서버
+
+- method `POST`
+- URL `/source/server`
+
+#### Request Header
+
+```
+POST /source/server HTTP/1.1
+Content-Type:  application/json
+Host: localhost:3000
+```
+
+#### Request Body
+
+```
+{
+    "emergency" : "string",
+    "sourceType" : "string",
+    "systemRequire" : ["item1", "item2",...],
+    "startDate" : "0000-00-00",
+    "endDate" : "0000-00-00",
+    "IP" : "string",
+    "firewallRequire" : "string",
+    "deployType" : "string",
+    "summary" : "string",
+    "etcRequire" : "string",
+    "PUBKEY" : "string",
+    "repository" : "string",
+    "deployHelp" : boolean
+}
+```
+
+#### Resonse Header
+
+```
+HTTP/1.1 200 OK
+Authorization: Bearer {JWT Token}
+Content-Type: application/json
+```
+
+#### Response Body
+
+```
+{
+  "success" : true,
+  "response" : "" ,
+  "error" : null
+}
+
+```
+
+### 자원관리 / DB
+
+- method `POST`
+- URL `/source/db`
+
+#### Request Header
+
+```
+POST /source/db HTTP/1.1
+Content-Type:  application/json
+Host: localhost:3000
+```
+
+#### Request Body
+
+```
+{
+    "emergency" : "string",
+    "sourceType" : "string",
+    "systemRequire" : ["item1", "item2",...],
+    "startDate" : "0000-00-00",
+    "endDate" : "0000-00-00",
+    "IP" : "string",
+    "summary" : "string",
+    "etcRequire" : "string",
+    "repository" : "string",
+    "systemHelp" : boolean
+}
+```
+
+#### Resonse Header
+
+```
+HTTP/1.1 200 OK
+Authorization: Bearer {JWT Token}
+Content-Type: application/json
+```
+
+#### Response Body
+
+```
+{
+  "success" : true,
+  "response" : "" ,
+  "error" : null
+}
+
+```
+
+### 자원관리 / SW 사용
+
+- method `POST`
+- URL `/source/sw`
+
+#### Request Header
+
+```
+
+POST /source/sw HTTP/1.1
+Content-Type: application/json
+Host: localhost:3000
+
+```
+
+#### Request Body
+
+```
+{
+    "user" : "string",
+    "charge" : "string",
+    "stored" : "string",
+    "newRequire" : "string",
+    "provider" : "string",
+    "link" : "string",
+    "version" : number,
+    "license" : number,
+    "startDate" : "0000-00-00",
+    "usage" : "string",
+    "righteousness" : "string",
+    "fixedterm" : boolean
+}
+```
+
+#### Resonse Header
+
+```
+HTTP/1.1 200 OK
+Authorization: Bearer {JWT Token}
+Content-Type: application/json
+```
+
+#### Response Body
+
+```
+{
+  "success" : true,
+  "response" : "" ,
+  "error" : null
+}
+```
+
+### 자원관리 / 기타
+
+- method `POST`
+- URL `/source/etc`
+
+#### Request Header
+
+```
+
+POST /source/etc HTTP/1.1
+Content-Type: application/json
+Host: localhost:3000
+
+```
+
+#### Request Body
+
+```
+{
+    "emergency" : "string",
+    "message" : "string",
+}
+```
+
+#### Resonse Header
+
+```
+HTTP/1.1 200 OK
+Authorization: Bearer {JWT Token}
+Content-Type: application/json
+```
+
+#### Response Body
+
+```
+{
+  "success" : true,
+  "response" : "" ,
+  "error" : null
+}
+```
+
+### 권한관리 / 서버
+
+- method `POST`
+- URL `/auth/server`
+
+#### Request Header
+
+```
+POST /auth/server HTTP/1.1
+Content-Type: application/json
+Host: localhost:3000
+
+```
+
+#### Request Body
+
+```
+
+{
+    "user" : "string",
+    "IP" : "string",
+    "Phone" : "010-0000-0000",
+    "email" : email,
+    "list" : [{
+         "server" : "string",
+         "require" : "string",
+          "message" : "string"},
+        {
+         "server" : "string",
+         "require" : "string",
+         "message" : "string" }...],
+    "etcRequire" : "string"
+}
+
+```
+
+#### Resonse Header
+
+```
+HTTP/1.1 200 OK
+Authorization: Bearer {JWT Token}
+Content-Type: application/json
+
+```
+
+#### Response Body
+
+```
+
+{
+  "success" : true,
+  "response" : "" ,
+  "error" : null
+}
+
+```
+
+### 질문 / 요청
+
+- method `POST`
+- URL `/inquiry/require`
+
+#### Request Header
+
+```
+POST /inquiry/require HTTP/1.1
+Content-Type: multipart/form-data
+Host: localhost:3000
+```
+
+#### Request Body
+
+```
+FormData
+
+name = "file"
+filename = "example.png"
+Content-Type : png,jpeg ...etc
+
+------------
+
+name = "requestDTO"
+filename = "blob"
+Content-Type : application/json
+
+{
+   "summary" : "string",
+   "message" : "string"
+}
+
+```
+
+#### Resonse Header
+
+```
+HTTP/1.1 200 OK
+Authorization: Bearer {JWT Token}
+Content-Type: application/json
+```
+
+#### Response Body
+
+```
+{
+  "success" : true,
+  "response" : "" ,
+  "error" : null
+}
+```
+
+### 질문 / 요청
+
+- method `POST`
+- URL `/inquiry/ask`
+
+#### Request Header
+
+```
+POST /inquiry/ask HTTP/1.1
+Content-Type: multipart/form-data
+Host: localhost:3000
+```
+
+#### Request Body
+
+```
+FormData
+
+name = "file"
+filename = "example.png"
+Content-Type : png,jpeg ...etc
+
+------------
+
+name = "requestDTO"
+filename = "blob"
+Content-Type : application/json
+
+{
+   "message" : "string"
+}
+
+```
+
+#### Resonse Header
+
+```
+HTTP/1.1 200 OK
+Authorization: Bearer {JWT Token}
+Content-Type: application/json
+```
+
+#### Response Body
+
+```
+{
+  "success" : true,
+  "response" : "" ,
+  "error" : null
+}
+```
+
+</details>
