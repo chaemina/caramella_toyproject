@@ -152,6 +152,12 @@
 <details>
 <summary>API 문서</summary>
 
+```
+name, title max length : 50자
+message, summary max length : 300자
+
+```
+
 ### Login
 
 - method `POST`
@@ -195,6 +201,42 @@ Content-Type: application/json
   "success" : false,
   "response" : "" ,
   "error" : "일치하지 않는 ID와 PW입니다."
+}
+
+```
+
+### Refresh
+
+- method `GET`
+- URL `/refresh`
+
+#### Request Header
+
+```
+null
+```
+
+#### Request Body
+
+```
+null
+```
+
+#### Resonse Header
+
+```
+HTTP/1.1 200 OK
+Authorization: Bearer {JWT Token} // access token 재발급
+Content-Type: application/json
+```
+
+#### Response Body
+
+```
+{
+  "success" : true,
+  "response" : "" ,
+  "error" : null
 }
 
 ```
