@@ -1,4 +1,4 @@
-// import { Inter } from "next/font/google";
+"use client";
 import "./globals.css";
 
 // const inter = Inter({ subsets: ["latin"] });
@@ -12,6 +12,19 @@ import "./globals.css";
 // }
 
 export default function RootLayout({ children }) {
+  if (process.env.NODE_ENV === "development") {
+    if (window === "undefined") {
+      (async () => {
+        const { server } = await import("../mocks/server");
+        server.listen();
+      })();
+    } else {
+      (async () => {
+        const { worker } = await import("../mocks/browser");
+        worker.start();
+      })();
+    }
+  }
   return (
     <html>
       <body>{children}</body>
