@@ -18,3 +18,7 @@ a {
 /* a:hover {
   color: #2563eb;
 } */
+
+.MuiStack-root.fade-in {
+  display: none;
+}

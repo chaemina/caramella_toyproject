@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, FormProvider, Controller } from "react-hook-form";
 import { InputBox } from "../atoms/InputBox";
 import { login } from "../../apis/user";
@@ -8,8 +8,12 @@ import useLogin from "../hooks/useLogin";
 import { useRouter } from "next/navigation";
 import Stack from "@mui/material/Stack";
 import Btn from "../atoms/Btn";
+import Timer from "../atoms/Timer";
 
 const Signup = ({ inputProps }) => {
+  const time = new Date();
+  time.setSeconds(time.getSeconds() + 3);
+
   const { loginUser } = useLogin();
   const router = useRouter();
   const methods = useForm();
@@ -19,9 +23,41 @@ const Signup = ({ inputProps }) => {
   const email = watch("email");
   const password = watch("password");
   const passwordcheck = watch("passwordcheck");
+  const [isdisabled, setdisabled] = useState(false);
+  const [code, setCode] = useState("");
+  const [timer, setTimer] = useState(time);
 
+  // 1. 이메일 인증 요청  -> 이메일 담아서 POST 요청 & count down 하기
+  // 2. 인증 시간 연장 요청 -> count down 값 늘리기
+  // 3. 이메일 인증 요청 시간 초과 시 -> 에러 코드에 따라 에러 처리
+  // 4. 이메일 코드 입력
+  // 성공 시 -> 버튼 disabled
+  // 실패 시 -> 에러 코드에 따라 에러 처리
+
+  // 이메일 인증 버튼
   const handleEmailCheck = () => {
-    return console.log("email check");
+    const fadeEls = document.querySelectorAll(".MuiStack-root.fade-in");
+    fadeEls.forEach((fadeEl, index) => {
+      fadeEl.style.display = "flex";
+    });
+  };
+
+  // 연장 버튼
+  const handleRestart = () => {
+    const newTimer = new Date();
+    newTimer.setSeconds(newTimer.getSeconds() + 300);
+    setTimer(newTimer);
+  };
+
+  // 이메일 코드 확인 버튼
+  const handleConfirm = () => {
+    return console.log("click");
+  };
+
+  // 인증 시간 만료 시
+  const handleTimerExpire = () => {
+    console.warn("Timer expired!");
+    setdisabled(true);
   };
 
   const onSubmit = async (data) => {
@@ -115,6 +151,7 @@ const Signup = ({ inputProps }) => {
         render={({ field, fieldState }) => (
           <InputBox
             {...field}
+            className={inputField.className}
             id={inputField.name}
             label={inputField.label}
             variant={inputField.variant}
@@ -128,13 +165,6 @@ const Signup = ({ inputProps }) => {
       />
     );
   };
-
-  // 1. 이메일 인증 요청  -> 이메일 담아서 POST 요청 & count down 하기
-  // 2. 인증 시간 연장 요청 -> count down 값 늘리기
-  // 3. 이메일 인증 요청 시간 초과 시 -> 에러 코드에 따라 에러 처리
-  // 4. 이메일 코드 입력
-  // 성공 시 -> 버튼 disabled
-  // 실패 시 -> 에러 코드에 따라 에러 처리
 
   return (
     <main className="w-full">
@@ -151,6 +181,36 @@ const Signup = ({ inputProps }) => {
               onClick={handleEmailCheck}
             >
               이메일 인증
+            </Btn>
+          </Stack>
+          <Stack direction="row" spacing={2} className="fade-in mt-5 w-full">
+            <input
+              className="h-[2rem] mt-2 max-w-[10rem]"
+              placeholder="인증 코드를 입력하세요."
+              onChange={(e) => {
+                setCode(e.target.value);
+              }}
+            ></input>
+            <Timer
+              className="text-m mt-2 w-[2rem]"
+              timer={timer}
+              onExpire={handleTimerExpire}
+            />
+            <Btn
+              variant="contained"
+              className="w-[2rem] h-[2rem] bg-blue-400"
+              onClick={handleRestart}
+              disabled={isdisabled}
+            >
+              연장
+            </Btn>
+            <Btn
+              variant="contained"
+              className="w-[2rem] h-[2rem] bg-blue-400"
+              onClick={handleConfirm}
+              disabled={isdisabled}
+            >
+              확인
             </Btn>
           </Stack>
           {inputProps

@@ -46,6 +46,7 @@ export const InputBox = forwardRef((props, ref) => {
           onChange(e);
           props.triggerValidation?.(props.name);
         }}
+        className={props.className}
         onBlur={onBlur}
         value={value}
         inputRef={ref}

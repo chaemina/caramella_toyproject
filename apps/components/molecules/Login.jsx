@@ -21,14 +21,14 @@ const Login = ({ inputProps }) => {
   const onSubmit = async (data) => {
     try {
       const response = await login({
-        userId: email,
+        email: email,
         password: password,
       });
       // console.log(res.headers["authorization"]);
-      console.log(response);
+      console.log(response.headers["authorization"]);
       console.log(data);
 
-      if (response?.status === 201) {
+      if (response?.status === 200) {
         // loginUser(response); // token storage에 저장하는 hook 작성
         loginUser(response);
         console.log("login success");

@@ -1,7 +1,7 @@
 // jotai 쓸지 말지..
 const useLogin = () => {
   const loginUser = (response) => {
-    window.localStorage.setItem("token", response?.headers?.authorization);
+    window.localStorage.setItem("token", response.headers["authorization"]);
   };
   const logoutUser = () => {
     window.localStorage.removeItem("token");
