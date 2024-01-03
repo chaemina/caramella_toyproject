@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useForm, FormProvider, Controller } from "react-hook-form";
+import Link from "next/link";
 import { InputBox } from "../atoms/InputBox";
 import { login } from "../../apis/user";
 import useLogin from "../hooks/useLogin";
@@ -130,10 +131,14 @@ const Login = ({ inputProps }) => {
             LogIn
           </Btn>
           <Stack spacing={2} direction="row" className="mt-5 w-full">
-            <Btn variant="contained" className="w-1/2 bg-blue-400 h-[4em]">
+            <Btn
+              variant="contained"
+              className="w-1/2 bg-blue-400 h-[4em]"
+              href="/signup"
+            >
               Sign up
             </Btn>
-            <Btn variant="contained" className="w-1/2 bg-blue-400 h-[4em]">
+            <Btn variant="contained" href className="w-1/2 bg-blue-400 h-[4em]">
               ID/PW 찾기
             </Btn>
           </Stack>

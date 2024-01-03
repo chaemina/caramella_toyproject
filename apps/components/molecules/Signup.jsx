@@ -20,6 +20,10 @@ const Signup = ({ inputProps }) => {
   const password = watch("password");
   const passwordcheck = watch("passwordcheck");
 
+  const handleEmailCheck = () => {
+    return console.log("email check");
+  };
+
   const onSubmit = async (data) => {
     try {
       const response = await login({
@@ -99,29 +103,59 @@ const Signup = ({ inputProps }) => {
       }
     }
   };
+
+  const renderController = (inputField) => {
+    return (
+      <Controller
+        name={inputField.name}
+        key={inputField.name}
+        control={methods.control}
+        defaultValue=""
+        rules={inputField.rules}
+        render={({ field, fieldState }) => (
+          <InputBox
+            {...field}
+            id={inputField.name}
+            label={inputField.label}
+            variant={inputField.variant}
+            type={inputField.type}
+            placeholder={inputField.placeholder}
+            error={fieldState.invalid}
+            helperText={fieldState.invalid ? fieldState.error.message : ""}
+            triggerValidation={methods.trigger}
+          />
+        )}
+      />
+    );
+  };
+
+  // 1. 이메일 인증 요청  -> 이메일 담아서 POST 요청 & count down 하기
+  // 2. 인증 시간 연장 요청 -> count down 값 늘리기
+  // 3. 이메일 인증 요청 시간 초과 시 -> 에러 코드에 따라 에러 처리
+  // 4. 이메일 코드 입력
+  // 성공 시 -> 버튼 disabled
+  // 실패 시 -> 에러 코드에 따라 에러 처리
+
   return (
     <main className="w-full">
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(onSubmit)}>
-          {inputProps.map((inputField) => (
-            <Controller
-              name={inputField.name}
-              key={inputField.name}
-              control={methods.control}
-              defaultValue=""
-              rules={inputField.rules}
-              render={({ field, fieldState }) => (
-                <InputBox
-                  {...field}
-                  id={inputField.name}
-                  label={inputField.label}
-                  variant={inputField.variant}
-                  type={inputField.type}
-                  placeholder={inputField.placeholder}
-                />
-              )}
-            />
-          ))}
+          <Stack spacing={5} direction="row" className="mt-5 w-full">
+            {inputProps
+              .filter((props) => props.name === "email")
+              .map(renderController)}
+
+            <Btn
+              variant="outlined"
+              className="w-[10em] mt-10 h-[4em] bg-blue-400"
+              onClick={handleEmailCheck}
+            >
+              이메일 인증
+            </Btn>
+          </Stack>
+          {inputProps
+            .filter((inputField) => inputField.name !== "email")
+            .map(renderController)}
           <Btn
             type="submit"
             variant="contained"

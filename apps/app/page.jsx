@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "caramella intranet",
+  title: "Caramella | 카라멜라",
 };
 
 export default function Home() {

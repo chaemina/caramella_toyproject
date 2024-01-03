@@ -1,6 +1,14 @@
 import Button from "@mui/material/Button";
 
-const Btn = ({ onClick, type, children, variant, className, ...props }) => {
+const Btn = ({
+  onClick,
+  type,
+  children,
+  variant,
+  className,
+  href,
+  ...props
+}) => {
   return (
     <>
       <Button
@@ -8,6 +16,7 @@ const Btn = ({ onClick, type, children, variant, className, ...props }) => {
         type={type}
         variant={variant}
         className={className}
+        href={href}
       >
         {children}
       </Button>
