@@ -21,9 +21,9 @@ import { instance } from "./instance";
 // };
 
 export const login = (data) => {
-  const { userId, password } = data;
+  const { email, password } = data;
   return instance.post("/auth/login", {
-    userId,
+    email,
     password,
   });
 };
