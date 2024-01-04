@@ -22,3 +22,17 @@ a {
 .MuiStack-root.fade-in {
   display: none;
 }
+
+ul {
+  list-style: none;
+}
+
+#demo-customized-button {
+  font-size: 20px;
+  color: #2d3748;
+  background-color: #f7fafc;
+}
+
+#demo-customized-button:hover {
+  background-color: #e2e8f0;
+}
