@@ -17,6 +17,7 @@ import useTimer from "../hooks/useTimer";
 import Timer from "../atoms/Timer";
 import BasicDatePicker from "../atoms/BasicDatePicker";
 import useInputError from "../hooks/useInputError";
+import Toast from "../atoms/Toast";
 
 const Signup = ({ inputProps }) => {
   const router = useRouter();
@@ -31,7 +32,23 @@ const Signup = ({ inputProps }) => {
   const [isdisabled, setdisabled] = useState(false);
   const [code, setCode] = useState("");
   const [timer, setTimer] = useState(null);
+  const [message, setMessage] = useState("");
+  const [severity, setSeverity] = useState("");
   const { handleInputError } = useInputError(setError);
+  const [open, setOpen] = useState(false);
+
+  const handleClose = (event, reason) => {
+    if (reason !== "clickaway") {
+      setOpenToastError(false);
+      setOpen(false);
+    }
+  };
+
+  const handleOk = (event, reason) => {
+    if (reason !== "clickaway") {
+      setOpen(false);
+    }
+  };
 
   const handleDuplicateCheck = async (data) => {
     try {
@@ -138,17 +155,34 @@ const Signup = ({ inputProps }) => {
       });
       if (response?.status === 201) {
         // 이메일 인증 성공 시 토스트
+        setOpen(true);
+        setMessage("이메일 인증에 성공했습니다!");
+        setSeverity("success");
+        setTimeout(() => {
+          handleOk();
+        }, 3000);
         console.log("성공");
         setdisabled(true);
         setTimer(null);
       } else {
         // 요청 실패 시 토스트
+        setOpen(true);
+        setMessage("이메일 인증에 실패했습니다. 다시 시도하세요. ");
+        setSeverity("error");
+        setTimeout(() => {
+          handleOk();
+        }, 3000);
         console.log("인증 중 오류 발생");
       }
     } catch (error) {
       if (error?.response?.status === 400) {
         // 인증 실패 시 토스트
-        console.log("인증 코드가 올바르지 않습니다. 다시 입력해주세요.");
+        setOpen(true);
+        setMessage("인증코드가 올바르지 않습니다. 다시 시도하세요. ");
+        setSeverity("error");
+        setTimeout(() => {
+          handleOk();
+        }, 2000);
       }
     }
   };
@@ -196,9 +230,15 @@ const Signup = ({ inputProps }) => {
         });
 
         if (response?.status === 201) {
-          console.log("login success");
-          router.push("/");
           // 회원가입 성공 토스트
+          setOpen(true);
+          setMessage("회원가입에 성공했습니다!");
+          setSeverity("success");
+          setTimeout(() => {
+            handleOk();
+            router.push("/");
+          }, 3000);
+          console.log("login success");
         } else {
           // 회원가입 실패
           handleInputError(
@@ -226,19 +266,19 @@ const Signup = ({ inputProps }) => {
           "사용 중인 이메일입니다. 다른 이메일로 시도하세요."
         );
       } else if (error?.response?.status === 400) {
-        handleInputError(
-          "email",
-          "회원 가입 중 오류가 발생했습니다. 다시 시도하세요."
-        );
+        setOpen(true);
+        setMessage("회원 가입 중 오류가 발생했습니다.");
+        setSeverity("error");
+        setTimeout(() => {
+          handleOk();
+        }, 3000);
       } else {
-        handleInputError(
-          "email",
-          "회원가입 중 오류가 발생했습니다. 다시 시도하세요."
-        );
-        handleInputError(
-          "password",
-          "회원가입 중 오류가 발생했습니다. 다시 시도하세요."
-        );
+        setOpen(true);
+        setMessage("회원 가입에 실패했습니다. 다시 시도하세요.");
+        setSeverity("error");
+        setTimeout(() => {
+          handleOk();
+        }, 3000);
       }
     }
   };
@@ -340,6 +380,13 @@ const Signup = ({ inputProps }) => {
           </Btn>
         </form>
       </FormProvider>
+      <Toast
+        open={open}
+        handleClose={handleClose}
+        severity={severity}
+        message={message}
+        autoHideDuration={3000}
+      />
     </main>
   );
 };
