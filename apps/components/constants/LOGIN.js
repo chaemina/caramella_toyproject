@@ -9,7 +9,7 @@ const LOGIN = Object.freeze([
       required: "이메일을 입력하세요.",
       pattern: {
         // value: /^[a-zA-Z0-9._-]{2,4}$/,
-        message: "Caramella 이메일 형식으로 입력해야 합니다.",
+        message: "이메일 형식으로 입력하세요.",
       },
     },
   },
