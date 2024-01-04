@@ -10,23 +10,15 @@ export const handlers = [
       password: "password1234!",
     };
     const accessToken = "Bearer accessToken";
+
     const headers = {
       Authorization: accessToken,
     };
-
-    // if (!authorizationHeader) {
-    //   return res(
-    //     ctx.status(403),
-    //     ctx.json({
-    //       errorMessage: "Not authenticated",
-    //     })
-    //   );
-    // }
     const response = { user };
 
     return res(
-      ctx.status(201),
-      // ctx.set("Set-Cookie", `mySecret=${token}`),
+      ctx.status(200),
+      ctx.cookie("refreshToken", "cookie1234"),
       ctx.json({
         message: "Login successful",
         data: response,
@@ -48,14 +40,6 @@ export const handlers = [
       birth: "2002-06-07",
     };
 
-    // if (!authorizationHeader) {
-    //   return res(
-    //     ctx.status(403),
-    //     ctx.json({
-    //       errorMessage: "Not authenticated",
-    //     })
-    //   );
-    // }
     const response = { user };
 
     return res(
