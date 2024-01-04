@@ -3,7 +3,13 @@
 import React, { useState } from "react";
 import { useForm, FormProvider, Controller } from "react-hook-form";
 import { InputBox } from "../atoms/InputBox";
-import { emailcheck, signup, emailcode, authextend } from "../../apis/user";
+import {
+  emailcheck,
+  signup,
+  emailcode,
+  authextend,
+  duplicatecheck,
+} from "../../apis/user";
 import { useRouter } from "next/navigation";
 import Stack from "@mui/material/Stack";
 import Btn from "../atoms/Btn";
@@ -27,41 +33,69 @@ const Signup = ({ inputProps }) => {
   const [timer, setTimer] = useState(null);
   const { handleInputError } = useInputError(setError);
 
-  // 1. 이메일 인증 요청  -> 이메일 담아서 POST 요청 & count down 하기
-  // 2. 인증 시간 연장 요청 -> count down 값 늘리기
-  // 3. 이메일 인증 요청 시간 초과 시 -> 에러 코드에 따라 에러 처리
-  // 4. 이메일 코드 입력
-  // 성공 시 -> 버튼 disabled
-  // 실패 시 -> 에러 코드에 따라 에러 처리
-
-  // 이메일 인증 버튼
-  const handleEmailCheck = async (data) => {
+  const handleDuplicateCheck = async (data) => {
     try {
-      const response = await emailcheck({
-        type: "create",
-        email: email,
-      });
+      const response = await duplicatecheck({ email });
       if (response?.status === 201) {
-        // 인증 요청 성공 했을 때만
-        setdisabled(false);
-        const fadeEls = document.querySelectorAll(".MuiStack-root.fade-in");
-        fadeEls.forEach((fadeEl, index) => {
-          fadeEl.style.display = "flex";
-        });
-        useTimer((newTimer) => setTimer(newTimer));
+        console.log("Response:", response);
+        return true;
       } else {
         handleInputError(
           "email",
-          "이메일 인증 중 오류가 발생했습니다. 다시 시도하세요."
+          "이메일 중복 체크 중 오류가 발생했습니다. 다시 시도하세요."
         );
       }
     } catch (error) {
       if (error?.response?.status === 400) {
         handleInputError("email", "이메일 입력 후 다시 시도하세요.");
+        return false;
+      } else if (error?.response?.status === 409) {
+        handleInputError(
+          "email",
+          "이미 사용 중인 이메일입니다. 다른 이메일로 다시 시도하세요."
+        );
+        return false;
       } else {
         console.log("error");
       }
+      return false;
+    }
+  };
+
+  // 이메일 인증 버튼
+  const handleEmailCheck = async (data) => {
+    try {
+      const emailIsValid = await handleDuplicateCheck(email);
+
+      if (emailIsValid) {
+        const response = await emailcheck({
+          type: "create",
+          email: email,
+        });
+        if (response?.status === 201) {
+          // 인증 요청 성공 했을 때만
+          setdisabled(false);
+          const fadeEls = document.querySelectorAll(".MuiStack-root.fade-in");
+          fadeEls.forEach((fadeEl, index) => {
+            fadeEl.style.display = "flex";
+          });
+          useTimer((newTimer) => setTimer(newTimer));
+        } else {
+          handleInputError(
+            "email",
+            "이메일 인증 중 오류가 발생했습니다. 다시 시도하세요."
+          );
+        }
+      } else {
+        console.log("이메일 중복 체크 요청 실패");
+      }
+    } catch (error) {
       // 인증 요청 실패 시 토스트로 에러 처리
+      if (error?.response?.status === 400) {
+        handleInputError("email", "이메일 입력 후 다시 시도하세요.");
+      } else {
+        console.log("error");
+      }
     }
   };
 
@@ -103,14 +137,17 @@ const Signup = ({ inputProps }) => {
         code: code,
       });
       if (response?.status === 201) {
+        // 이메일 인증 성공 시 토스트
         console.log("성공");
         setdisabled(true);
         setTimer(null);
       } else {
-        console.log("실패");
+        // 요청 실패 시 토스트
+        console.log("인증 중 오류 발생");
       }
     } catch (error) {
       if (error?.response?.status === 400) {
+        // 인증 실패 시 토스트
         console.log("인증 코드가 올바르지 않습니다. 다시 입력해주세요.");
       }
     }
@@ -122,6 +159,7 @@ const Signup = ({ inputProps }) => {
     setdisabled(true);
   };
 
+  // 비밀번호 일치 체크
   const handlePasswordConfirm = () => {
     if (password && passwordCheck) {
       if (password !== passwordCheck) {
@@ -173,6 +211,7 @@ const Signup = ({ inputProps }) => {
           );
         }
       } else {
+        console.log("비밀번호 일치 실패");
       }
     } catch (error) {
       // 에러 코드 처리

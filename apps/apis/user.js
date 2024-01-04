@@ -43,3 +43,10 @@ export const authextend = (data) => {
     email,
   });
 };
+
+export const duplicatecheck = (data) => {
+  const { email } = data;
+  return instance.post("/auth/check", {
+    email,
+  });
+};
