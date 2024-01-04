@@ -2,11 +2,11 @@
 
 import React from "react";
 import { useForm, FormProvider, Controller } from "react-hook-form";
-import Link from "next/link";
 import { InputBox } from "../atoms/InputBox";
 import { login } from "../../apis/user";
 import useLogin from "../hooks/useLogin";
 import { useRouter } from "next/navigation";
+import useInputError from "../hooks/useInputError";
 import Stack from "@mui/material/Stack";
 import Btn from "../atoms/Btn";
 
@@ -17,6 +17,7 @@ const Login = ({ inputProps }) => {
   const { watch, control, handleSubmit, setError } = methods;
   const email = watch("email");
   const password = watch("password");
+  const { handleInputError } = useInputError(setError);
 
   const onSubmit = async (data) => {
     try {
@@ -24,7 +25,7 @@ const Login = ({ inputProps }) => {
         email: email,
         password: password,
       });
-      // console.log(res.headers["authorization"]);
+
       console.log(response.headers["authorization"]);
       console.log(data);
 
@@ -35,67 +36,31 @@ const Login = ({ inputProps }) => {
         router.push("/");
       } else {
         // 로그인 실패
-        setError(
+        handleInputError(
           "email",
-          {
-            message: "로그인 중 오류가 발생했습니다. 다시 시도하세요.",
-          },
-          {
-            shouldFocus: true,
-          }
+          "로그인 중 오류가 발생했습니다. 다시 시도하세요."
         );
-        setError(
+        handleInputError(
           "password",
-          {
-            message: "로그인 중 오류가 발생했습니다. 다시 시도하세요.",
-          },
-          {
-            shouldFocus: true,
-          }
+          "로그인 중 오류가 발생했습니다. 다시 시도하세요."
         );
-        console.error("log in failed", error);
       }
     } catch (error) {
       if (error?.response?.status === 400) {
-        setError(
+        handleInputError(
           "password",
-          {
-            message: "비밀번호가 일치하지 않습니다. 다시 시도하세요.",
-          },
-          {
-            shouldFocus: true,
-          }
+          "비밀번호가 일치하지 않습니다. 다시 시도하세요."
         );
-        console.error("log in failed", error);
       } else if (error?.response?.status === 401) {
-        setError(
-          "email",
-          {
-            message: "존재하지 않는 id입니다. 다시 시도하세요.",
-          },
-          {
-            shouldFocus: true,
-          }
-        );
-        console.error("log in failed", error);
+        handleInputError("email", "존재하지 않는 id 입니다. 다시 시도하세요.");
       } else {
-        setError(
+        handleInputError(
           "email",
-          {
-            message: "로그인 중 오류가 발생했습니다. 다시 시도하세요.",
-          },
-          {
-            shouldFocus: true,
-          }
+          "로그인 중 오류가 발생했습니다. 다시 시도하세요."
         );
-        setError(
+        handleInputError(
           "password",
-          {
-            message: "로그인 중 오류가 발생했습니다. 다시 시도하세요.",
-          },
-          {
-            shouldFocus: true,
-          }
+          "로그인 중 오류가 발생했습니다. 다시 시도하세요."
         );
       }
     }

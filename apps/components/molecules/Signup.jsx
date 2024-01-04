@@ -1,31 +1,31 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useForm, FormProvider, Controller } from "react-hook-form";
 import { InputBox } from "../atoms/InputBox";
-import { login } from "../../apis/user";
-import useLogin from "../hooks/useLogin";
+import { emailcheck, signup, emailcode, authextend } from "../../apis/user";
 import { useRouter } from "next/navigation";
 import Stack from "@mui/material/Stack";
 import Btn from "../atoms/Btn";
+import useTimer from "../hooks/useTimer";
 import Timer from "../atoms/Timer";
+import BasicDatePicker from "../atoms/BasicDatePicker";
+import useInputError from "../hooks/useInputError";
 
 const Signup = ({ inputProps }) => {
-  const time = new Date();
-  time.setSeconds(time.getSeconds() + 3);
-
-  const { loginUser } = useLogin();
   const router = useRouter();
   const methods = useForm();
-  const { watch, control, handleSubmit, setError } = methods;
+  const { watch, control, handleSubmit, setError, clearErrors } = methods;
   const name = watch("name");
   const phone = watch("phone");
   const email = watch("email");
   const password = watch("password");
-  const passwordcheck = watch("passwordcheck");
+  const passwordCheck = watch("passwordcheck");
+  const birth = watch("birth");
   const [isdisabled, setdisabled] = useState(false);
   const [code, setCode] = useState("");
-  const [timer, setTimer] = useState(time);
+  const [timer, setTimer] = useState(null);
+  const { handleInputError } = useInputError(setError);
 
   // 1. 이메일 인증 요청  -> 이메일 담아서 POST 요청 & count down 하기
   // 2. 인증 시간 연장 요청 -> count down 값 늘리기
@@ -35,23 +35,85 @@ const Signup = ({ inputProps }) => {
   // 실패 시 -> 에러 코드에 따라 에러 처리
 
   // 이메일 인증 버튼
-  const handleEmailCheck = () => {
-    const fadeEls = document.querySelectorAll(".MuiStack-root.fade-in");
-    fadeEls.forEach((fadeEl, index) => {
-      fadeEl.style.display = "flex";
-    });
+  const handleEmailCheck = async (data) => {
+    try {
+      const response = await emailcheck({
+        type: "create",
+        email: email,
+      });
+      if (response?.status === 201) {
+        // 인증 요청 성공 했을 때만
+        setdisabled(false);
+        const fadeEls = document.querySelectorAll(".MuiStack-root.fade-in");
+        fadeEls.forEach((fadeEl, index) => {
+          fadeEl.style.display = "flex";
+        });
+        useTimer((newTimer) => setTimer(newTimer));
+      } else {
+        handleInputError(
+          "email",
+          "이메일 인증 중 오류가 발생했습니다. 다시 시도하세요."
+        );
+      }
+    } catch (error) {
+      if (error?.response?.status === 400) {
+        handleInputError("email", "이메일 입력 후 다시 시도하세요.");
+      } else {
+        console.log("error");
+      }
+      // 인증 요청 실패 시 토스트로 에러 처리
+    }
   };
 
   // 연장 버튼
-  const handleRestart = () => {
-    const newTimer = new Date();
-    newTimer.setSeconds(newTimer.getSeconds() + 300);
-    setTimer(newTimer);
+  const handleRestart = async (data) => {
+    try {
+      const response = await authextend({
+        type: "create",
+        email: email,
+      });
+      if (response?.status === 201) {
+        // 연장 요청 성공 시
+        useTimer((newTimer) => setTimer(newTimer));
+      } else {
+        handleInputError(
+          "email",
+          "연장 요청에 실패하였습니다. 다시 시도하세요."
+        );
+      }
+    } catch (error) {
+      // 연장 요청 실패 시 토스트로 에러 처리
+      if (error?.response?.status === 400) {
+        handleInputError(
+          "email",
+          "연장 요청에 실패하였습니다. 다시 시도하세요."
+        );
+      } else {
+        console.log("error");
+      }
+    }
   };
 
   // 이메일 코드 확인 버튼
-  const handleConfirm = () => {
-    return console.log("click");
+  const handleConfirm = async (data) => {
+    try {
+      const response = await emailcode({
+        type: "create",
+        email: email,
+        code: code,
+      });
+      if (response?.status === 201) {
+        console.log("성공");
+        setdisabled(true);
+        setTimer(null);
+      } else {
+        console.log("실패");
+      }
+    } catch (error) {
+      if (error?.response?.status === 400) {
+        console.log("인증 코드가 올바르지 않습니다. 다시 입력해주세요.");
+      }
+    }
   };
 
   // 인증 시간 만료 시
@@ -60,81 +122,83 @@ const Signup = ({ inputProps }) => {
     setdisabled(true);
   };
 
-  const onSubmit = async (data) => {
-    try {
-      const response = await login({
-        userId: email,
-        password: password,
-      });
-      console.log(response);
-
-      if (response?.status === 201) {
-        loginUser(response);
-        console.log("login success");
-        router.push("/");
+  const handlePasswordConfirm = () => {
+    if (password && passwordCheck) {
+      if (password !== passwordCheck) {
+        handleInputError(
+          "passwordcheck",
+          "비밀번호가 일치하지 않습니다. 입력한 비밀번호로 다시 시도해주세요."
+        );
+        return false;
       } else {
-        // 로그인 실패
-        setError(
-          "email",
-          {
-            message: "로그인 중 오류가 발생했습니다. 다시 시도하세요.",
-          },
-          {
-            shouldFocus: true,
-          }
-        );
-        setError(
-          "password",
-          {
-            message: "로그인 중 오류가 발생했습니다. 다시 시도하세요.",
-          },
-          {
-            shouldFocus: true,
-          }
-        );
-        console.error("log in failed", error);
+        clearErrors("passwordcheck");
+        return true;
+      }
+    }
+    return false;
+  };
+
+  // 회원가입 요청
+  const onSubmit = async () => {
+    try {
+      const passwordIsValid = await handlePasswordConfirm(password);
+
+      if (passwordIsValid) {
+        let birthDate = null;
+        if (birth && birth.$d) {
+          birthDate = birth.format("YYYY-MM-DD");
+        }
+
+        const response = await signup({
+          email: email,
+          password: password,
+          phone: phone,
+          birth: birthDate,
+          name: name,
+        });
+
+        if (response?.status === 201) {
+          console.log("login success");
+          router.push("/");
+          // 회원가입 성공 토스트
+        } else {
+          // 회원가입 실패
+          handleInputError(
+            "email",
+            "회원가입 중 오류가 발생했습니다. 다시 시도하세요."
+          );
+          handleInputError(
+            "password",
+            "회원가입 중 오류가 발생했습니다. 다시 시도하세요."
+          );
+        }
+      } else {
       }
     } catch (error) {
-      if (error?.response?.status === 400) {
-        setError(
-          "password",
-          {
-            message: "비밀번호가 일치하지 않습니다. 다시 시도하세요.",
-          },
-          {
-            shouldFocus: true,
-          }
-        );
-        console.error("log in failed", error);
-      } else if (error?.response?.status === 401) {
-        setError(
+      // 에러 코드 처리
+      if (error?.response?.status === 401) {
+        handleInputError(
           "email",
-          {
-            message: "존재하지 않는 id입니다. 다시 시도하세요.",
-          },
-          {
-            shouldFocus: true,
-          }
+          "이메일이 인증되지 않았습니다. 인증 후 다시 시도하세요."
         );
-        console.error("log in failed", error);
+      } else if (error?.response?.status === 409) {
+        handleInputError(
+          "email",
+          "사용 중인 이메일입니다. 다른 이메일로 시도하세요."
+        );
+      } else if (error?.response?.status === 400) {
+        handleInputError(
+          "email",
+          "회원 가입 중 오류가 발생했습니다. 다시 시도하세요."
+        );
       } else {
-        setError(
+        handleInputError(
           "email",
-          {
-            message: "로그인 중 오류가 발생했습니다. 다시 시도하세요.",
-          },
-          {
-            shouldFocus: true,
-          }
+          "회원가입 중 오류가 발생했습니다. 다시 시도하세요."
         );
-        setError(
+        handleInputError(
           "password",
-          {
-            message: "로그인 중 오류가 발생했습니다. 다시 시도하세요.",
-          },
-          {
-            shouldFocus: true,
-          }
+          "회원가입 중 오류가 발생했습니다. 다시 시도하세요."
         );
       }
     }
@@ -216,6 +280,18 @@ const Signup = ({ inputProps }) => {
           {inputProps
             .filter((inputField) => inputField.name !== "email")
             .map(renderController)}
+          <Controller
+            name="birth"
+            control={methods.control}
+            render={(field) => (
+              <BasicDatePicker
+                {...field}
+                control={methods.control}
+                name="birth"
+                value={birth}
+              />
+            )}
+          />
           <Btn
             type="submit"
             variant="contained"
