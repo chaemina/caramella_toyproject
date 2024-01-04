@@ -8,7 +8,7 @@ const LoginTemplate = () => {
       <main className="flex  justify-center items-center">
         <div className="w-[1500px] mt-[5%] flex justify-center items-center">
           <div className="w-1/2 p-10 ">
-            <div className="">
+            <div className="flex flex-col">
               <Image src={Logo} width={350} height={50} alt="logo"></Image>
               <p className="text-3xl">Caramella Intranet ✨</p>
               <p className="text-lg">
@@ -18,6 +18,9 @@ const LoginTemplate = () => {
               </p>
               <Link href="https://caramella.kr/" className="text-lg font-bold">
                 카라멜라 바로가기
+              </Link>
+              <Link href="/" className="text-lg font-bold mt-2">
+                메인 페이지로 돌아가기
               </Link>
             </div>
           </div>
