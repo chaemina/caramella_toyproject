@@ -9,7 +9,7 @@ const SignupForm = ({ className }) => {
     <>
       <div className={`justify-center flex flex-col ${className}`}>
         <Title>Sign Up</Title>
-        <div className="mt-4 max-w-[45em] flex flex-col justify-center items-center">
+        <div className="mt-4 mb-6 max-w-[45em] flex flex-col justify-center items-center">
           <Signup inputProps={SIGNUP} />
         </div>
       </div>
