@@ -6,7 +6,7 @@ export default function MainLayout({ children }) {
       <header className="h-[100px]">
         <Header />
       </header>
-      {children}
+      <div className="p-4">{children}</div>
       <h1>Footer</h1>
     </>
   );

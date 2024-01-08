@@ -1,3 +1,5 @@
+import MainTemplate from "~/components/templates/MainTemplate";
+
 export const metadata = {
   title: "Caramella | 카라멜라",
 };
@@ -5,7 +7,7 @@ export const metadata = {
 export default function Home() {
   return (
     <>
-      <p className="text-4xl">hi</p>
+      <MainTemplate />
     </>
   );
 }
