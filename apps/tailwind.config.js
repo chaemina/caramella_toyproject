@@ -8,6 +8,9 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        gray: {
+          50: "#F7FAFC",
+        },
         sky: {
           50: "#f0f9ff",
         },
