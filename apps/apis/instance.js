@@ -5,7 +5,7 @@ import axios from "axios";
 // instance 생성
 
 export const instance = axios.create({
-  // baseURL: process.env.NEXT_PUBLIC_ANALYTICS_ID,
+  baseURL: process.env.NEXT_PUBLIC_ANALYTICS_ID,
   timeout: 1000 * 10,
 });
 
