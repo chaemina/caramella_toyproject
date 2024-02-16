@@ -16,10 +16,10 @@ const LoginTemplate = () => {
                 필요합니다. 카라멜라 인트라넷은 카라멜라 직원만 이용이
                 가능합니다.
               </p>
-              <Link href="https://caramella.kr/" className="text-lg font-bold">
+              <Link href="https://caramella.kr/" className="text-lg">
                 카라멜라 바로가기
               </Link>
-              <Link href="/" className="text-lg font-bold mt-2">
+              <Link href="/" className="text-lg mt-2">
                 메인 페이지로 돌아가기
               </Link>
             </div>

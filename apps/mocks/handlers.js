@@ -51,4 +51,27 @@ export const handlers = [
       })
     );
   }),
+
+
+
+// 개선사항 
+  rest.post("/improve", async (req, res, ctx) => {
+
+    const data = {
+      input : "간단한 개선 사항을 남겨주세요."
+    };
+
+    const response = { data };
+
+    return res(
+      ctx.status(200),
+      ctx.json({
+        message: "successful",
+        data: response,
+        status: 200,
+      }),
+    );
+  }),
+
+
 ];

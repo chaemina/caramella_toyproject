@@ -12,7 +12,7 @@ const Header = () => {
   const auth = localStorage.getItem("token");
 
   return (
-    <div className="w-full h-[100px] fixed bg-gray-50 top-0 z-9">
+    <div className="w-full h-[100px] fixed bg-gray-50 top-0 z-50">
       <div className="flex w-[90%] h-full items-center justify-between pl-6 pr-6">
         <Link href="/">
           <Image src={Logo} href="/" width={200} height={30} alt="logo"></Image>
